@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package test.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+import "google/protobuf/empty.proto";
+
+//option go_package = "github.com/sfroment/zama/gen/go/test/v1;test_v1";
+
+message Test {
+  string name = 1 [
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 10,
+    (buf.validate.field).required = true
+  ];
+}
+
+service AuthService {
+  rpc SendTest(Test) returns (google.protobuf.Empty) {
+    option (google.api.http) = {post: "/v1/test/send"};
+  }
+
+  rpc GetTest(google.protobuf.Empty) returns (Test) {
+    option (google.api.http) = {get: "/v1/test/get"};
+  }
+}
